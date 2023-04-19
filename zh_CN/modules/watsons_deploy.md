@@ -16,3 +16,4 @@
 
 ## 架构图
 
+![sdes_architecture](./assets/sdes/sdes_architecture.png)
