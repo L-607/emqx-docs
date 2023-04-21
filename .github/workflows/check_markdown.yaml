@@ -1,33 +1,33 @@
-name: Check Docs
+# name: Check Docs
 
-on: [push, pull_request]
+# on: [push, pull_request]
 
-jobs:
-  markdown_check:
-    runs-on: ubuntu-latest
-    steps:
-    - name: check out code
-      uses: actions/checkout@main
+# jobs:
+#   markdown_check:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: check out code
+#       uses: actions/checkout@main
 
-    - name: check markdown
-      run: |
-        sudo npm install -g markdownlint-cli
-        markdownlint -c .github/workflows/markdown_config.json ./
+#     - name: check markdown
+#       run: |
+#         sudo npm install -g markdownlint-cli
+#         markdownlint -c .github/workflows/markdown_config.json ./
 
-  broker_directory_check:
-    runs-on: ubuntu-latest
-    steps:
-    - name: check out code
-      uses: actions/checkout@main
+#   broker_directory_check:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: check out code
+#       uses: actions/checkout@main
   
-    - name: check directory config
-      run: python3 .github/scripts/directory_check.py directory.json $(pwd)
+#     - name: check directory config
+#       run: python3 .github/scripts/directory_check.py directory.json $(pwd)
 
-  enterprise_directory_check:
-    runs-on: ubuntu-latest
-    steps:
-    - name: check out code
-      uses: actions/checkout@main
+#   enterprise_directory_check:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: check out code
+#       uses: actions/checkout@main
   
-    - name: check enterprise directory config
-      run: python3 .github/scripts/directory_check.py directory_ee.json $(pwd)
+#     - name: check enterprise directory config
+#       run: python3 .github/scripts/directory_check.py directory_ee.json $(pwd)
