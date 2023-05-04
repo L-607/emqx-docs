@@ -1,6 +1,7 @@
 # EMQX & Watsons SDES Script - CopyFile
 
 ## 功能解释
+CopyFile 主要用于 POS 报表、销售数据、进货记录等文件的复制，指定源文件路径和目标路径即可将一个文件从一个位置复制到另一个位置。可以让屈臣氏门店的员工更加高效地完成备份和复制 POS 报表等数据文件，以便进行财务核算、销售分析等工作。
 ## 配置方法
 主要流程为：Add Job--->Add Task--->Edit Script
 ## 演示截图

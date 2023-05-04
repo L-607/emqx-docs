@@ -1,6 +1,7 @@
 # EMQX & Watsons SDES Tasks
 
 ## Information meaning of Task
+
 ## Add new task
 Click Add Task on SDES Dashboard
 ![add_task](./assets/sdes/add_task.png)

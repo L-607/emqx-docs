@@ -1,6 +1,7 @@
 # EMQX & Watsons SDES Script - CopyFile
 
 ## Function Explanation
+CopyFile is mainly used for copying files such as POS reports, sales data, and purchase records, by specifying the source file path and destination path, a file can be copied from one location to another. This can allow employees of Watsons stores to efficiently back up and copy data files such as POS reports, facilitating financial accounting and sales analysis work.
 ## Configuration method
 The main process is: Add Job--->Add Task--->Edit Script
 ## Demo Screenshot

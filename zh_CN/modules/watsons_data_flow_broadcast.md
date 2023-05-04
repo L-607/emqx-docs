@@ -89,6 +89,7 @@ $file/${trans topic suffix}
 QoS 1
 </br>
 Payload
+</br>
 使用 nftp 文件传输协议（1.0 版本），协议细节参考 nftp 章节
 
 ```text
