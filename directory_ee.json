@@ -268,6 +268,70 @@
         {
           "title": "MQTT 消息延迟发布",
           "path": "modules/delayed_publish"
+        },
+        {
+          "title": "Watsons Module",
+          "path": "modules/watsons_module"
+        },
+        {
+          "title": "Agent Data Flow - Broadcast",
+          "path": "modules/watsons_data_flow_broadcast"
+        },
+        {
+          "title": "Agent Data Flow - Push",
+          "path": "modules/watsons_data_flow_push"
+        },
+        {
+          "title": "Watsons SDES Deploy",
+          "path": "modules/watsons_deploy"
+        },
+        {
+          "title": "Watsons SDES Agent Install",
+          "path": "modules/watsons_agent_useage"
+        },
+        {
+          "title": "Watsons SDES Boot Client",
+          "path": "modules/watsons_dashboard_useage_add_client"
+        },
+        {
+          "title": "Watsons SDES Jobs",
+          "path": "modules/watsons_jobs"
+        },
+        {
+          "title": "Watsons SDES Tasks",
+          "path": "modules/watsons_task"
+        },
+        {
+          "title": "Watsons SDES Script - CopyFile",
+          "path": "modules/watsons_script_copy_file"
+        },
+        {
+          "title": "Watsons SDES Script - DeleteFile",
+          "path": "modules/watsons_script_del_file"
+        },
+        {
+          "title": "Watsons SDES Script - Execute BAT",
+          "path": "modules/watsons_script_exec_bat"
+        },
+        {
+          "title": "Watsons SDES Script - Upload",
+          "path": "modules/watsons_script_upload"
+        },
+        {
+          "title": "Watsons SDES Script - Broadcast",
+          "path": "modules/watsons_script_broadcast"
+        },
+        {
+          "title": "Watsons SDES Script - IF",
+          "path": "modules/watsons_script_if"
+        },
+        {
+          "title": "Watsons SDES Script - WaitFile",
+          "path": "modules/watsons_script_wait_file"
+        },
+        {
+          "title": "Watsons SDES Backend API",
+          "path": "modules/watsons_backend_api"
         }
       ]
     },
@@ -1044,6 +1108,70 @@
         {
           "title": "MQTT Delayed Publish",
           "path": "modules/delayed_publish"
+        },
+        {
+          "title": "Watsons Module",
+          "path": "modules/watsons_module"
+        },
+        {
+          "title": "Agent Data Flow - Broadcast",
+          "path": "modules/watsons_data_flow_broadcast"
+        },
+        {
+          "title": "Agent Data Flow - Push",
+          "path": "modules/watsons_data_flow_push"
+        },
+        {
+          "title": "Watsons SDES Deploy",
+          "path": "modules/watsons_deploy"
+        },
+        {
+          "title": "Watsons SDES Agent Install",
+          "path": "modules/watsons_agent_useage"
+        },
+        {
+          "title": "Watsons SDES Boot Client",
+          "path": "modules/watsons_dashboard_useage_add_client"
+        },
+        {
+          "title": "Watsons SDES Jobs",
+          "path": "modules/watsons_jobs"
+        },
+        {
+          "title": "Watsons SDES Tasks",
+          "path": "modules/watsons_task"
+        },
+        {
+          "title": "Watsons SDES Script - CopyFile",
+          "path": "modules/watsons_script_copy_file"
+        },
+        {
+          "title": "Watsons SDES Script - DeleteFile",
+          "path": "modules/watsons_script_del_file"
+        },
+        {
+          "title": "Watsons SDES Script - Execute BAT",
+          "path": "modules/watsons_script_exec_bat"
+        },
+        {
+          "title": "Watsons SDES Script - Upload",
+          "path": "modules/watsons_script_upload"
+        },
+        {
+          "title": "Watsons SDES Script - Broadcast",
+          "path": "modules/watsons_script_broadcast"
+        },
+        {
+          "title": "Watsons SDES Script - IF",
+          "path": "modules/watsons_script_if"
+        },
+        {
+          "title": "Watsons SDES Script - WaitFile",
+          "path": "modules/watsons_script_wait_file"
+        },
+        {
+          "title": "Watsons SDES Backend API",
+          "path": "modules/watsons_backend_api"
         }
       ]
     },
