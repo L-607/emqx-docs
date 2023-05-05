@@ -1,4 +1,4 @@
-# Agent Data Flow - Broadcast： 上传
+# Watsons Agent Data Flow - Broadcast： 上传
 
 ## 场景
 
@@ -95,3 +95,7 @@ Payload
 ```text
 file content encode by nftp
 ```
+
+## 文件流
+
+![img](./watsons/agent_data_flow/broadcast_data_flow.jpg)
