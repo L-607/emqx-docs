@@ -34,12 +34,40 @@ EMQX Enterprise 版本使用三节点集群的方式，确保服务高可用。
 
 ![sdes_architecture](./assets/sdes/sdes_architecture.png)
 
+## 资源信息
+
+资源配置以及端口信息如下
+
+|     服务     |            资源配置             | 最小资源 |                          端口                           |
+| :----------: | :-----------------------------: | :------: | :-----------------------------------------------------: |
+| EMQX Cluster |           3 * (8c16g)           |   1c1g   | 1883<br/>8883<br/>8083<br/>8084<br/>8081<br/>18083<br/> |
+|  BackendAPI  | API(Java SpringBoot)2 * (8c16g) | 0.5c500m |                          9000                           |
+|    MySQL     |           1 * (8c16g)           |   1c1g   |                          3306                           |
+|   Frontent   |           2 * (1c2g)            | 0.5c500m |                                                         |
+
 ## 开始部署
+
 ### 部署emqx-ee
 
 打开daocloud平台，点击应用然后选择通过 YAML 编排应用。填写类型如下 YAML 文件。
 
+![daocloud_1](./assets/sdes/daocloud_1.png)
+
+配置填写应用名称，填写如下 YAML 文件。
+
+![daocloud_2](./assets/sdes/daocloud_2.png)
+
+组件 EMQX 集群 yaml 文件内容如下：
+
 ~~~yaml
+---
+# create ns emqx
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: emqx-ee
+  name: emqx-ee
 ---
 # Source: rbac.yaml
 apiVersion: v1
@@ -89,9 +117,7 @@ metadata:
   namespace: emqx-ee
   labels:
     app.kubernetes.io/name: emqx-ee
-    
-    
-    
+     
 data:
     EMQX_CLUSTER__K8S__ADDRESS_TYPE: "hostname"
     EMQX_CLUSTER__K8S__APISERVER: "https://kubernetes.default.svc:443"
@@ -203,24 +229,7 @@ spec:
   podManagementPolicy: Parallel 
   
   updateStrategy:
-    type: RollingUpdate
-
-  volumeClaimTemplates:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        annotations:
-          volume.beta.kubernetes.io/storage-class: nfs-storage # storage class name here
-        labels:
-          app.kubernetes.io/name: emqx-ee
-        name: emqx-ee-data
-        namespace: emqx-ee
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi  
+    type: RollingUpdate 
   
   replicas: 3
   selector:
@@ -231,7 +240,7 @@ spec:
     metadata:
       labels:
         app: emqx-ee
-        version: 4.4.18
+        version: Watsons
         app.kubernetes.io/name: emqx-ee
         
     spec:
@@ -244,7 +253,7 @@ spec:
       
       containers:
         - name: emqx
-          image: "emqx/emqx-ee:4.4.18"
+          image: "10.95.35.98/emqx/emqx-ee:202304261421"
           imagePullPolicy: IfNotPresent
           
          
@@ -279,8 +288,6 @@ spec:
             value: emqx-ee
           resources: {}
           volumeMounts:
-          - mountPath: /opt/emqx/data/mnesia
-            name: emqx-ee-data 
           - name: host-time
             mountPath: /etc/localtime
           
@@ -301,11 +308,135 @@ spec:
             failureThreshold: 10  
 ~~~
 
-注意这里可以把`namespace: emqx-ee`修改为对应的k8S命名空间，`EMQX_CLUSTER__K8S__NAMESPACE`对应的value也修改为对应的命名空间。把`nfs-storage`修改为环境上对应的存储类来配置持久化,镜像名镜像tag修改为想对应私有仓库的。
+注意这里需要把`namespace: emqx-ee`修改为对应的k8S命名空间，`EMQX_CLUSTER__K8S__NAMESPACE`对应的value也修改为对应的命名空间。镜像名镜像tag需要修改为相对应私有仓库的`image: "10.95.35.98/emqx/emqx-ee:202304261421"`。YAML 通过configmap的方式指定了EMQX Dashboard 用户的默认密码`J#i2&Dbfc!od`。
+
+配置完成后通过Daocloud页面可以看到该应用对应的服务端口信息，可以看到对应关系如下。
+
+![daocloud_3](./assets/sdes/daocloud_3.png)
+
+### 登陆 EMQX 后台管理 Dashboard
+
+账号与密码,密码为上方设置的密码
+
+~~~shell
+admin/J#i2&Dbfc!od
+~~~
+
+### Module
+
+在左侧导航栏找到 `Modules` ，点击进入后点击 `Add Module`。
+
+![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/init_modules.png)
+
+点击 `Local Modules` 找到 `Watsons Server`。或者在右侧搜索栏输入 `Watsons Server`
+
+![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/lookup_w_module.png)
+
+点击 `Select`，进入模块配置。
+
+这里需要根据实际的情况填写对应的 MySQL 数据库地址等信息。
+
+![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/config_module.png)
+
+配置参数
+
+| Name                 | Type   | Info                                 |
+| -------------------- | ------ | ------------------------------------ |
+| MySQL Server IP Port | String | MySQL 数据库地址与服务端口号         |
+| MySQL Database Name  | String | MySQL 数据库名                       |
+| MySQL User Name      | String | MySQL 数据库登陆用户，必须有读写权限 |
+| MySQL Password       | String | MySQL 数据库登陆密码                 |
+
+点击 `Add` 按钮，插件启动时会从 MySQL 数据库中加载数据，并且也会初始化一些业务查询过程，根据 MySQL 性能以及网络速度，启动会较慢，一般需要 4 到 5 秒。
+
+### 模块启动成功
+
+![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/ensure_module.png)
+
+### 模块注意事项
+
+模块仅需启动一次，启动过程会在集群中自动同步。
+
+### Rule
+
+模块配置完成后需要通过 EMQX 规则引擎配置一条规则，这个规则作用主要用来 Job log report。首先需要配置MySQL资源。
+
+![daocloud_3](./assets/sdes/rule_4.png)
+
+填写上主要的MySQL相关信息，然后点击添加规则。
+
+![daocloud_3](./assets/sdes/rule_1.png)
+
+规则的 SQL 内容如下。
+
+~~~sql
+SELECT
+    payload.report_id as report_id,
+    payload.status as job_status,
+    payload.start_time as start_time,
+    payload.end_time as end_time,
+    payload.now as script_now,
+    payload.job_id as job_id,
+    payload.task_id as task_id,
+    payload.script_id as script_id,
+    payload.order as script_order,
+    payload.type as script_type,
+    payload.error_code as error_code,
+    payload.message as script_error_message,
+    clientid as client_id
+FROM
+    '$report/job/+/task/+'
+~~~
+
+然后需要配置规则的 action 把相关数据处理后输出到 MySQL 数据库中。
+
+![daocloud_3](./assets/sdes/rule_2.png)
+
+![daocloud_3](./assets/sdes/rule_3.png)
+
+SQL Template 内容填上插入语句，内容如下
+
+~~~sql
+
+INSERT INTO
+    job_logs (
+        `status`,
+        start_time,
+        end_time,
+        now_time,
+        job_id,
+        task_id,
+        script_id,
+        `order`,
+        error_code,
+        `error_message`,
+        mqtt_client_id,
+        report_id,
+        script_type
+    )
+VALUES
+(
+    ${job_status},
+    ${start_time},
+    ${end_time},
+    ${script_now},
+    ${job_id},
+    ${task_id},
+    ${script_id},
+    ${script_order},
+    ${error_code},
+    ${script_error_message},
+    ${client_id},
+    ${report_id},
+    ${script_type}
+    );
+~~~
+
+所有配置完成后点击 confirm 提交。
 
 ### 部署backend—api
 
-打开daocloud平台，点击应用然后选择通过 YAML 编排应用。填写类型如下 YAML 文件。
+打开daocloud平台，点击应用然后选择通过 YAML 编排应用。这里步骤跟上面一致
 
 ~~~yaml
 kind: Deployment
@@ -336,7 +467,7 @@ spec:
             defaultMode: 420
       containers:
         - name: emqx-backend-api
-          image: 'emqx/emqx-backend-api:latest'
+          image: '10.95.35.98/emqx/sdes-api:202305101513'
           imagePullPolicy: IfNotPresent
           ports:
             - name: backend-api
@@ -426,7 +557,26 @@ data:
         root: info
     sdes:
       baseUrl: http://10.95.35.93:33816
-      token: Basic YWRtaW46YWRtaW4=
+      token: Basic YWRtaW46SiNpMiZEYmZjIW9k
 ~~~
 
-注意将这里`image`替换为实际的image,修改`confingmap`中jdbc相关配置信息以及sdes相关配置信息。
+注意这里需要修改`confingmap`中jdbc相关配置信息以及sdes相关配置信息。
+
+~~~yml
+datasource:
+	url: jdbc:mysql://10.95.35.226:3306/sdes_asia?useUnicode=true&characterEncoding=utf-8
+	username: u_sdes_asia
+	password: n^vSUb6MAM
+~~~
+
+这里配置需要改成跟 EMQX 那边一样的相对应的 MySQL 地址、用户名、密码等信息。
+
+同时需要修改一下 sdes 配置项相关信息。
+
+~~~yml
+sdes:
+	baseUrl: http://10.95.35.93:33816
+  token: Basic YWRtaW46YWRtaW4=
+~~~
+
+这里 baseUrl 地址为 EMQX Dashboard 地址，token为其认证信息如果有修改密码需要对其进行修改。
