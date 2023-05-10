@@ -57,7 +57,7 @@ Configure and fill in the application name, and fill in the following YAML file.
 
 ![daocloud_2](./assets/sdes/daocloud_2.png)
 
-The content of the component EMQX cluster yaml file is as follows:
+The content of the yaml file for building an EMQX cluster is as follows:
 
 ~~~yaml
 ---
@@ -466,7 +466,7 @@ spec:
             defaultMode: 420
       containers:
         - name: emqx-backend-api
-          image: '10.95.35.98/emqx/sdes-api:202305101513'
+          image: "10.95.35.98/emqx/sdes-api:202305101513"
           imagePullPolicy: IfNotPresent
           ports:
             - name: backend-api
@@ -558,8 +558,7 @@ data:
       baseUrl: http://10.95.35.93:33816
       token: Basic YWRtaW46SiNpMiZEYmZjIW9k
 ~~~
-Note that you need to modify the jdbc-related configuration information and sdes-related configuration information in `confingmap`.
-
+Note that here you need to modify `namespace: emqx-ee` to the corresponding k8S namespace, and the image name and image tag need to be modified to `image: "10.95.35.98/emqx/sdes-api:202305101513"` of the corresponding private warehouse. Modify jdbc-related configuration information and sdes-related configuration information in `confingmap`.
 ~~~yml
 datasource:
 url: jdbc:mysql://10.95.35.226:3306/sdes_asia?useUnicode=true&characterEncoding=utf-8

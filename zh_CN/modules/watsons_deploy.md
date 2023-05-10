@@ -57,7 +57,7 @@ EMQX Enterprise 版本使用三节点集群的方式，确保服务高可用。
 
 ![daocloud_2](./assets/sdes/daocloud_2.png)
 
-组件 EMQX 集群 yaml 文件内容如下：
+组建 EMQX 集群 yaml 文件内容如下：
 
 ~~~yaml
 ---
@@ -467,7 +467,7 @@ spec:
             defaultMode: 420
       containers:
         - name: emqx-backend-api
-          image: '10.95.35.98/emqx/sdes-api:202305101513'
+          image: "10.95.35.98/emqx/sdes-api:202305101513"
           imagePullPolicy: IfNotPresent
           ports:
             - name: backend-api
@@ -560,7 +560,7 @@ data:
       token: Basic YWRtaW46SiNpMiZEYmZjIW9k
 ~~~
 
-注意这里需要修改`confingmap`中jdbc相关配置信息以及sdes相关配置信息。
+注意这里需要把`namespace: emqx-ee`修改为对应的k8S命名空间，镜像名镜像tag需要修改为相对应私有仓库的`image: "10.95.35.98/emqx/sdes-api:202305101513"`，需要修改`confingmap`中jdbc相关配置信息以及sdes相关配置信息。
 
 ~~~yml
 datasource:
