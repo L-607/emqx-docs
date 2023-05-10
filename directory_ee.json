@@ -282,6 +282,10 @@
           "path": "modules/watsons_data_flow_push"
         },
         {
+          "title": "Watsons SDES DB Design",
+          "path": "modules/watsons_db_design"
+        },
+        {
           "title": "Watsons SDES Deploy",
           "path": "modules/watsons_deploy"
         },
@@ -1120,6 +1124,10 @@
         {
           "title": "Agent Data Flow - Push",
           "path": "modules/watsons_data_flow_push"
+        },
+        {
+          "title": "Watsons SDES DB Design",
+          "path": "modules/watsons_db_design"
         },
         {
           "title": "Watsons SDES Deploy",
