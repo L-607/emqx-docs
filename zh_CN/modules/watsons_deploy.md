@@ -326,17 +326,17 @@ admin/J#i2&Dbfc!od
 
 在左侧导航栏找到 `Modules` ，点击进入后点击 `Add Module`。
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/init_modules.png)
+![image](./assets/sdes/init_modules.png)
 
 点击 `Local Modules` 找到 `Watsons Server`。或者在右侧搜索栏输入 `Watsons Server`
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/lookup_w_module.png)
+![image](./assets/sdes/lookup_w_module.png)
 
 点击 `Select`，进入模块配置。
 
 这里需要根据实际的情况填写对应的 MySQL 数据库地址等信息。
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/config_module.png)
+![image](./assets/sdes/config_module.png)
 
 配置参数
 
@@ -351,7 +351,7 @@ admin/J#i2&Dbfc!od
 
 ### 模块启动成功
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/ensure_module.png)
+![image](./assets/sdes/ensure_module.png)
 
 ### 模块注意事项
 

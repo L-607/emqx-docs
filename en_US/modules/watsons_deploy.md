@@ -325,17 +325,17 @@ admin/J#i2&Dbfc!od
 
 Find `Modules` in the left navigation bar, click to enter and click `Add Module`.
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/init_modules.png)
+![image](./assets/sdes/init_modules.png)
 
 Click on `Local Modules` to find `Watsons Server`. Or enter `Watsons Server` in the search bar on the right
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/lookup_w_module.png)
+![image](./assets/sdes/lookup_w_module.png)
 
 Click `Select` to enter the module configuration.
 
 Here you need to fill in the corresponding MySQL database address and other information according to the actual situation.
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/config_module.png)
+![image](./assets/sdes/config_module.png)
 
 configuration parameters
 
@@ -350,7 +350,7 @@ Click the `Add` button, and the plug-in will load data from the MySQL database w
 
 ### The module started successfully
 
-![image](/Users/l/Desktop/emqx-docs/zh_CN/modules/assets/sdes/ensure_module.png)
+![image](./assets/sdes/ensure_module.png)
 
 ### Module Considerations
 
