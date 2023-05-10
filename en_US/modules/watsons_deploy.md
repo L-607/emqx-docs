@@ -561,9 +561,9 @@ data:
 Note that here you need to modify `namespace: emqx-ee` to the corresponding k8S namespace, and the image name and image tag need to be modified to `image: "10.95.35.98/emqx/sdes-api:202305101513"` of the corresponding private warehouse. Modify jdbc-related configuration information and sdes-related configuration information in `confingmap`.
 ~~~yml
 datasource:
-url: jdbc:mysql://10.95.35.226:3306/sdes_asia?useUnicode=true&characterEncoding=utf-8
-username: u_sdes_asia
-password: n^vSUb6MAM
+  url: jdbc:mysql://10.95.35.226:3306/sdes_asia?useUnicode=true&characterEncoding=utf-8
+  username: u_sdes_asia
+  password: n^vSUb6MAM
 ~~~
 
 The configuration here needs to be changed to the corresponding MySQL address, user name, password and other information that are the same as those on EMQX.
@@ -572,8 +572,8 @@ At the same time, you need to modify the relevant information of the sdes config
 
 ~~~yml
 sdes:
-baseUrl: http://10.95.35.93:33816
-   token: Basic YWRtaW46YWRtaW4=
+  baseUrl: http://10.95.35.93:33816
+  token: Basic YWRtaW46YWRtaW4=
 ~~~
 
 Here, the baseUrl address is the EMQX Dashboard address, and token is its authentication information. If the password needs to be changed, it needs to be modified.

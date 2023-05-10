@@ -575,7 +575,7 @@ datasource:
 
 ~~~yml
 sdes:
-	baseUrl: http://10.95.35.93:33816
+  baseUrl: http://10.95.35.93:33816
   token: Basic YWRtaW46YWRtaW4=
 ~~~
 
