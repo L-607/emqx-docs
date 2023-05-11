@@ -125,7 +125,7 @@ data:
     EMQX_LOG__TO: "both"
     EMQX_LOG__LEVEL: "error"
     EMQX_dashboard__default_user__login: "admin"
-    EMQX_dashboard__default_user__password: "J#i2&Dbfc!od"
+    EMQX_dashboard__default_user__password: "emqxa303."
    
 ---
 # service.yaml
@@ -307,7 +307,7 @@ spec:
             periodSeconds: 30
             failureThreshold: 10  
 ~~~
-Note that `namespace: emqx-ee` needs to be modified to the corresponding k8S namespace, and the value corresponding to `EMQX_CLUSTER__K8S__NAMESPACE` should also be modified to the corresponding namespace. The image name and image tag need to be changed to `image: "10.95.35.98/emqx/emqx-ee:202304261421"` corresponding to the private warehouse. YAML specifies the default password `J#i2&Dbfc!od` of the EMQX Dashboard user through configmap.
+Note that `namespace: emqx-ee` needs to be modified to the corresponding k8S namespace, and the value corresponding to `EMQX_CLUSTER__K8S__NAMESPACE` should also be modified to the corresponding namespace. The image name and image tag need to be changed to `image: "10.95.35.98/emqx/emqx-ee:202304261421"` corresponding to the private warehouse. YAML specifies the default password `emqxa303.` of the EMQX Dashboard user through configmap.
 
 After the configuration is complete, you can see the service port information corresponding to the application through the Daocloud page, and you can see the corresponding relationship as follows.
 
@@ -318,10 +318,595 @@ After the configuration is complete, you can see the service port information co
 Account and password, the password is the password set above
 
 ~~~shell
-admin/J#i2&Dbfc!od
+admin/emqxa303.
 ~~~
 
-### Module
+### Restore EMQX configuration
+
+There are two main methods
+
+1. Restore by modifying the backup json and importing it (recommended).
+
+2. Manually configure on the dashboard page.
+
+### import json recovery
+
+The full json file looks like this
+~~~json
+{
+    "version": "4.4",
+    "rules": [
+        {
+            "id": "rule:911673",
+            "rawsql": "SELECT\n    payload.report_id as report_id,\n    payload.status as job_status,\n    payload.start_time as start_time,\n    payload.end_time as end_time,\n    payload.now as script_now,\n    payload.job_id as job_id,\n    payload.task_id as task_id,\n    payload.script_id as script_id,\n    payload.order as script_order,\n    payload.type as script_type,\n    payload.error_code as error_code,\n    payload.message as script_error_message,\n    clientid as client_id\nFROM\n    '$report/job/+/task/+'",
+            "actions": [
+                {
+                    "id": "data_to_mysql_1678601756022978870",
+                    "name": "data_to_mysql",
+                    "fallbacks": [],
+                    "args": {
+                        "sync_timeout": 5000,
+                        "sql": "INSERT INTO\n    job_logs (\n        `status`,\n        start_time,\n        end_time,\n        now_time,\n        job_id,\n        task_id,\n        script_id,\n        `order`,\n        error_code,\n        `error_message`,\n        mqtt_client_id,\n        report_id,\n        script_type\n    )\nVALUES\n(\n    ${job_status},\n    ${start_time},\n    ${end_time},\n    ${script_now},\n    ${job_id},\n    ${task_id},\n    ${script_id},\n    ${script_order},\n    ${error_code},\n    ${script_error_message},\n    ${client_id},\n    ${report_id},\n    ${script_type}\n    );",
+                        "insert_mode": "async",
+                        "enable_batch": true,
+                        "batch_time": 10,
+                        "batch_size": 100,
+                        "$resource": "resource:947678"
+                    }
+                }
+            ],
+            "enabled": true,
+            "description": "Job log report"
+        },
+        {
+            "id": "rule:458783",
+            "rawsql": "SELECT \nclientid, \nusername,\nformat_date('millisecond', 0, '%Y-%m-%d %H:%M:%S%:z',connected_at) as connected_at\nFROM \n\"$events/client_connected\"",
+            "actions": [
+                {
+                    "id": "data_to_mysql_1678601787360224313",
+                    "name": "data_to_mysql",
+                    "fallbacks": [],
+                    "args": {
+                        "sql": "INSERT INTO \nclients(mqtt_client_id, user_name, status,connected_at) \nVALUES(${clientid}, ${username}, 'online', ${connected_at})\nON DUPLICATE KEY UPDATE status='online',connected_at=${connected_at};",
+                        "enable_batch": false,
+                        "$resource": "resource:947678"
+                    }
+                }
+            ],
+            "enabled": false,
+            "description": "Online message"
+        },
+        {
+            "id": "rule:199804",
+            "rawsql": "SELECT \nclientid,\nformat_date('millisecond', 0, '%Y-%m-%d %H:%M:%S%:z',disconnected_at) as disconnected_at \nFROM \n\"$events/client_disconnected\"",
+            "actions": [
+                {
+                    "id": "data_to_mysql_1678601804182431479",
+                    "name": "data_to_mysql",
+                    "fallbacks": [],
+                    "args": {
+                        "sql": "UPDATE clients\nSET status='offline', disconnected_at = ${disconnected_at}\nWHERE mqtt_client_id=${clientid};",
+                        "enable_batch": false,
+                        "$resource": "resource:947678"
+                    }
+                }
+            ],
+            "enabled": false,
+            "description": "Offline message"
+        }
+    ],
+    "resources": [
+        {
+            "id": "resource:947678",
+            "type": "backend_mysql",
+            "config": {
+                "auto_reconnect": true,
+                "cacertfile": {
+                    "filename": "",
+                    "file": ""
+                },
+                "certfile": {
+                    "filename": "",
+                    "file": ""
+                },
+                "database": "sdes_asia",
+                "keyfile": {
+                    "filename": "",
+                    "file": ""
+                },
+                "password": "n^vSUb6MAM",
+                "pool_size": 8,
+                "server": "10.95.35.226:3306",
+                "ssl": false,
+                "user": "u_sdes_asia",
+                "verify": false
+            },
+            "created_at": 1682495481559,
+            "description": ""
+        }
+    ],
+    "blacklist": [],
+    "apps": [
+        {
+            "id": "admin",
+            "secret": "public",
+            "name": "Default",
+            "desc": "Application user",
+            "status": true,
+            "expired": "undefined"
+        }
+    ],
+    "users": [
+        {
+            "username": "admin",
+            "password": "BAMiqEweLr7gmM+i9IZpnsOVTtE=",
+            "tags": "administrator"
+        },
+        {
+            "username": "ddd",
+            "password": "TZR+FPpRCsqaEdqiJVP3itXEzHE=",
+            "tags": ""
+        }
+    ],
+    "auth_mnesia": [],
+    "acl_mnesia": [],
+    "modules": [
+        {
+            "id": "module:58d766d2",
+            "type": "prometheus",
+            "config": {
+                "url": "http://10.95.35.93:39762",
+                "interval": "15s"
+            },
+            "enabled": true,
+            "created_at": 1682495481616,
+            "description": ""
+        },
+        {
+            "id": "module:4814a68c",
+            "type": "internal_acl",
+            "config": {
+                "acl_rule_file": {
+                    "filename": "acl.conf",
+                    "file": "{allow, {user, \"dashboard\"}, subscribe, [\"$SYS/#\"]}.\n{allow, {ipaddr, \"127.0.0.1\"}, pubsub, [\"$SYS/#\", \"#\"]}.\n{deny, all, subscribe, [\"$SYS/#\", {eq, \"#\"}]}.\n{allow, all}.\n"
+                }
+            },
+            "enabled": true,
+            "created_at": 1673836325184,
+            "description": ""
+        },
+        {
+            "id": "module:22196f43",
+            "type": "presence",
+            "config": {
+                "qos": 0
+            },
+            "enabled": true,
+            "created_at": 1673836325184,
+            "description": ""
+        },
+        {
+            "id": "module:64091203",
+            "type": "retainer",
+            "config": {
+                "storage_type": "ram",
+                "max_retained_messages": 0,
+                "max_payload_size": "1MB",
+                "expiry_interval": 0
+            },
+            "enabled": true,
+            "created_at": 1673836325184,
+            "description": ""
+        },
+        {
+            "id": "module:3df086f6",
+            "type": "watsons",
+            "config": {
+                "mysql_username": "u_sdes_asia",
+                "mysql_server": "10.95.35.226:3306",
+                "mysql_pwd": "n^vSUb6MAM",
+                "mysql_database": "sdes_asia"
+            },
+            "enabled": true,
+            "created_at": 1682495481623,
+            "description": ""
+        },
+        {
+            "id": "module:58d274fb",
+            "type": "recon",
+            "config": {},
+            "enabled": true,
+            "created_at": 1673836325184,
+            "description": ""
+        }
+    ],
+    "schemas": [],
+    "configs": [
+        {
+            "name": "license",
+            "confs": {
+                "connection_high_watermark_alarm": "80%",
+                "connection_low_watermark_alarm": "75%"
+            }
+        },
+        {
+            "type": "tcp",
+            "name": "internal",
+            "confs": {
+                "acceptors": "4",
+                "active_n": "1000",
+                "backlog": "512",
+                "listener": "127.0.0.1:11883",
+                "max_conn_rate": "1000",
+                "max_connections": "1024000",
+                "nodelay": "false",
+                "peer_cert_as_clientid": "null",
+                "peer_cert_as_username": "null",
+                "proxy_protocol": "null",
+                "proxy_protocol_timeout": "null",
+                "recbuf": "64KB",
+                "reuseaddr": "true",
+                "send_timeout": "5s",
+                "send_timeout_close": "on",
+                "sndbuf": "64KB",
+                "zone": "internal"
+            }
+        },
+        {
+            "type": "tcp",
+            "name": "external",
+            "confs": {
+                "acceptors": "8",
+                "active_n": "100",
+                "backlog": "1024",
+                "listener": "0.0.0.0:1883",
+                "max_conn_rate": "1000",
+                "max_connections": "1024000",
+                "nodelay": "true",
+                "peer_cert_as_clientid": "null",
+                "peer_cert_as_username": "null",
+                "proxy_protocol": "null",
+                "proxy_protocol_timeout": "null",
+                "recbuf": "null",
+                "reuseaddr": "true",
+                "send_timeout": "15s",
+                "send_timeout_close": "on",
+                "sndbuf": "null",
+                "zone": "external"
+            }
+        },
+        {
+            "zone": "internal",
+            "confs": {
+                "allow_anonymous": "true",
+                "exclusive_subscription": "null",
+                "max_topic_alias": "null",
+                "enable_stats": "on",
+                "quota_overall_messages_routing": "null",
+                "use_username_as_clientid": "null",
+                "quota_conn_messages_routing": "null",
+                "idle_timeout": "null",
+                "latency_samples": "null",
+                "acl_deny_action": "ignore",
+                "publish_limit": "null",
+                "mqueue_store_qos0": "true",
+                "force_shutdown_policy": "null",
+                "session_expiry_interval": "null",
+                "bypass_auth_plugins": "true",
+                "keepalive_backoff": "null",
+                "enable_flapping_detect": "off",
+                "upgrade_qos": "null",
+                "conn_congestion_min_alarm_sustain_duration": "null",
+                "mqueue_priorities": "null",
+                "rate_limit_conn_messages_in": "null",
+                "strict_mode": "false",
+                "shared_subscription": "null",
+                "server_keepalive": "null",
+                "wildcard_subscription": "null",
+                "max_clientid_len": "null",
+                "response_information": "null",
+                "mountpoint": "null",
+                "max_awaiting_rel": "1000",
+                "acl_nomatch": "null",
+                "retry_interval": "null",
+                "retain_available": "null",
+                "ignore_loop_deliver": "false",
+                "enable_acl": "off",
+                "max_qos_allowed": "null",
+                "rate_limit_conn_bytes_in": "null",
+                "max_mqueue_len": "10000",
+                "max_topic_levels": "null",
+                "max_subscriptions": "0",
+                "force_gc_policy": "null",
+                "mqueue_default_priority": "null",
+                "max_inflight": "128",
+                "conn_congestion_alarm": "null",
+                "enable_ban": "null",
+                "await_rel_timeout": "null",
+                "max_packet_size": "null"
+            }
+        },
+        {
+            "name": "emqx",
+            "confs": {
+                "acl_cache_max_size": "32",
+                "acl_cache_ttl": "1m",
+                "acl_deny_action": "ignore",
+                "acl_nomatch": "allow",
+                "acl_order": "none",
+                "allow_anonymous": "true",
+                "auth_order": "none",
+                "broker_session_locking_strategy": "quorum",
+                "broker_shared_dispatch_ack_enabled": "false",
+                "broker_shared_subscription_strategy": "random",
+                "broker_sys_heartbeat": "30s",
+                "broker_sys_interval": "1m",
+                "enable_acl_cache": "on",
+                "flapping_detect_policy": "30, 1m, 5m",
+                "mqtt_exclusive_subscription": "false",
+                "mqtt_ignore_loop_deliver": "false",
+                "mqtt_max_clientid_len": "65535",
+                "mqtt_max_packet_size": "1MB",
+                "mqtt_max_qos_allowed": "2",
+                "mqtt_max_topic_alias": "65535",
+                "mqtt_max_topic_levels": "128",
+                "mqtt_retain_available": "true",
+                "mqtt_shared_subscription": "true",
+                "mqtt_strict_mode": "false",
+                "mqtt_wildcard_subscription": "true"
+            }
+        },
+        {
+            "type": "wss",
+            "name": "external",
+            "confs": {
+                "cacertfile": "null",
+                "mqtt_piggyback": "multiple",
+                "send_timeout_close": "on",
+                "ciphers": "TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256,TLS_CHACHA20_POLY1305_SHA256,TLS_AES_128_CCM_SHA256,TLS_AES_128_CCM_8_SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES256-SHA384,ECDHE-RSA-AES256-SHA384,ECDHE-ECDSA-DES-CBC3-SHA,ECDH-ECDSA-AES256-GCM-SHA384,ECDH-RSA-AES256-GCM-SHA384,ECDH-ECDSA-AES256-SHA384,ECDH-RSA-AES256-SHA384,DHE-DSS-AES256-GCM-SHA384,DHE-DSS-AES256-SHA256,AES256-GCM-SHA384,AES256-SHA256,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES128-SHA256,ECDHE-RSA-AES128-SHA256,ECDH-ECDSA-AES128-GCM-SHA256,ECDH-RSA-AES128-GCM-SHA256,ECDH-ECDSA-AES128-SHA256,ECDH-RSA-AES128-SHA256,DHE-DSS-AES128-GCM-SHA256,DHE-DSS-AES128-SHA256,AES128-GCM-SHA256,AES128-SHA256,ECDHE-ECDSA-AES256-SHA,ECDHE-RSA-AES256-SHA,DHE-DSS-AES256-SHA,ECDH-ECDSA-AES256-SHA,ECDH-RSA-AES256-SHA,AES256-SHA,ECDHE-ECDSA-AES128-SHA,ECDHE-RSA-AES128-SHA,DHE-DSS-AES128-SHA,ECDH-ECDSA-AES128-SHA,ECDH-RSA-AES128-SHA,AES128-SHA",
+                "idle_timeout": "null",
+                "depth": "null",
+                "sndbuf": "null",
+                "proxy_protocol": "null",
+                "recbuf": "null",
+                "tls_versions": "null",
+                "honor_cipher_order": "null",
+                "check_origins": "https://localhost:8084, https://127.0.0.1:8084",
+                "acceptors": "4",
+                "max_connections": "102400",
+                "proxy_address_header": "null",
+                "zone": "external",
+                "nodelay": "null",
+                "fail_if_no_peer_cert": "null",
+                "verify": "null",
+                "mqtt_path": "/mqtt",
+                "reuse_sessions": "null",
+                "proxy_port_header": "null",
+                "fail_if_no_subprotocol": "null",
+                "proxy_protocol_timeout": "null",
+                "check_origin_enable": "false",
+                "allow_origin_absence": "true",
+                "peer_cert_as_username": "null",
+                "log_level": "null",
+                "send_timeout": "15s",
+                "supported_subprotocols": "null",
+                "certfile": "etc/certs/cert.pem",
+                "key_password": "null",
+                "keyfile": "etc/certs/key.pem",
+                "active_n": "100",
+                "peer_cert_as_clientid": "null",
+                "psk_ciphers": "null",
+                "listener": "8084",
+                "dhfile": "null",
+                "backlog": "1024",
+                "max_conn_rate": "1000",
+                "secure_renegotiate": "null",
+                "max_frame_size": "null"
+            }
+        },
+        {
+            "type": "ssl",
+            "name": "external",
+            "confs": {
+                "cacertfile": "etc/certs/cacert.pem",
+                "ocsp_responder_url": "null",
+                "reuseaddr": "true",
+                "send_timeout_close": "null",
+                "ciphers": "TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256,TLS_CHACHA20_POLY1305_SHA256,TLS_AES_128_CCM_SHA256,TLS_AES_128_CCM_8_SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES256-SHA384,ECDHE-RSA-AES256-SHA384,ECDHE-ECDSA-DES-CBC3-SHA,ECDH-ECDSA-AES256-GCM-SHA384,ECDH-RSA-AES256-GCM-SHA384,ECDH-ECDSA-AES256-SHA384,ECDH-RSA-AES256-SHA384,DHE-DSS-AES256-GCM-SHA384,DHE-DSS-AES256-SHA256,AES256-GCM-SHA384,AES256-SHA256,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES128-SHA256,ECDHE-RSA-AES128-SHA256,ECDH-ECDSA-AES128-GCM-SHA256,ECDH-RSA-AES128-GCM-SHA256,ECDH-ECDSA-AES128-SHA256,ECDH-RSA-AES128-SHA256,DHE-DSS-AES128-GCM-SHA256,DHE-DSS-AES128-SHA256,AES128-GCM-SHA256,AES128-SHA256,ECDHE-ECDSA-AES256-SHA,ECDHE-RSA-AES256-SHA,DHE-DSS-AES256-SHA,ECDH-ECDSA-AES256-SHA,ECDH-RSA-AES256-SHA,AES256-SHA,ECDHE-ECDSA-AES128-SHA,ECDHE-RSA-AES128-SHA,DHE-DSS-AES128-SHA,ECDH-ECDSA-AES128-SHA,ECDH-RSA-AES128-SHA,AES128-SHA",
+                "hibernate_after": "null",
+                "depth": "null",
+                "handshake_timeout": "15s",
+                "sndbuf": "4KB",
+                "proxy_protocol": "null",
+                "gc_after_handshake": "null",
+                "ocsp_issuer_pem": "null",
+                "recbuf": "4KB",
+                "tls_versions": "null",
+                "honor_cipher_order": "null",
+                "acceptors": "16",
+                "enable_crl_check": "null",
+                "max_connections": "102400",
+                "zone": "external",
+                "nodelay": "null",
+                "fail_if_no_peer_cert": "null",
+                "verify": "null",
+                "reuse_sessions": "null",
+                "proxy_protocol_timeout": "null",
+                "ocsp_refresh_interval": "null",
+                "peer_cert_as_username": "null",
+                "log_level": "null",
+                "send_timeout": "null",
+                "certfile": "etc/certs/cert.pem",
+                "key_password": "null",
+                "keyfile": "etc/certs/key.pem",
+                "active_n": "100",
+                "peer_cert_as_clientid": "null",
+                "psk_ciphers": "null",
+                "crl_cache_urls": "null",
+                "listener": "8883",
+                "dhfile": "null",
+                "backlog": "null",
+                "max_conn_rate": "500",
+                "secure_renegotiate": "null",
+                "enable_ocsp_stapling": "null",
+                "ocsp_refresh_http_timeout": "null"
+            }
+        },
+        {
+            "type": "ws",
+            "name": "external",
+            "confs": {
+                "acceptors": "4",
+                "active_n": "100",
+                "allow_origin_absence": "true",
+                "backlog": "1024",
+                "check_origin_enable": "false",
+                "check_origins": "http://localhost:18083, http://127.0.0.1:18083",
+                "fail_if_no_subprotocol": "null",
+                "idle_timeout": "null",
+                "listener": "8083",
+                "max_conn_rate": "1000",
+                "max_connections": "102400",
+                "max_frame_size": "null",
+                "mqtt_path": "/mqtt",
+                "mqtt_piggyback": "multiple",
+                "nodelay": "true",
+                "peer_cert_as_clientid": "null",
+                "peer_cert_as_username": "null",
+                "proxy_address_header": "null",
+                "proxy_port_header": "null",
+                "proxy_protocol": "null",
+                "proxy_protocol_timeout": "null",
+                "recbuf": "null",
+                "send_timeout": "15s",
+                "send_timeout_close": "on",
+                "sndbuf": "null",
+                "supported_subprotocols": "null",
+                "zone": "external"
+            }
+        },
+        {
+            "name": "vm_mon",
+            "confs": {
+                "check_interval": "30s",
+                "process_high_watermark": "80%",
+                "process_low_watermark": "60%"
+            }
+        },
+        {
+            "zone": "external",
+            "confs": {
+                "allow_anonymous": "null",
+                "exclusive_subscription": "null",
+                "max_topic_alias": "null",
+                "enable_stats": "on",
+                "quota_overall_messages_routing": "null",
+                "use_username_as_clientid": "false",
+                "quota_conn_messages_routing": "null",
+                "idle_timeout": "15s",
+                "latency_samples": "null",
+                "acl_deny_action": "ignore",
+                "publish_limit": "null",
+                "mqueue_store_qos0": "true",
+                "force_shutdown_policy": "null",
+                "session_expiry_interval": "2h",
+                "bypass_auth_plugins": "null",
+                "keepalive_backoff": "0.75",
+                "enable_flapping_detect": "off",
+                "upgrade_qos": "off",
+                "conn_congestion_min_alarm_sustain_duration": "null",
+                "mqueue_priorities": "none",
+                "rate_limit_conn_messages_in": "null",
+                "strict_mode": "false",
+                "shared_subscription": "null",
+                "server_keepalive": "null",
+                "wildcard_subscription": "null",
+                "max_clientid_len": "null",
+                "response_information": "null",
+                "mountpoint": "null",
+                "max_awaiting_rel": "100",
+                "acl_nomatch": "null",
+                "retry_interval": "30s",
+                "retain_available": "null",
+                "ignore_loop_deliver": "false",
+                "enable_acl": "on",
+                "max_qos_allowed": "null",
+                "rate_limit_conn_bytes_in": "null",
+                "max_mqueue_len": "1000",
+                "max_topic_levels": "null",
+                "max_subscriptions": "0",
+                "force_gc_policy": "16000|16MB",
+                "mqueue_default_priority": "highest",
+                "max_inflight": "32",
+                "conn_congestion_alarm": "null",
+                "enable_ban": "on",
+                "await_rel_timeout": "300s",
+                "max_packet_size": "null"
+            }
+        },
+        {
+            "name": "os_mon",
+            "confs": {
+                "cpu_check_interval": "60s",
+                "cpu_high_watermark": "80%",
+                "cpu_low_watermark": "60%",
+                "mem_check_interval": "60s",
+                "procmem_high_watermark": "5%",
+                "sysmem_high_watermark": "70%"
+            }
+        }
+    ],
+    "listeners_state": [
+        {
+            "type": "tcp",
+            "name": "internal",
+            "status": true
+        },
+        {
+            "type": "tcp",
+            "name": "external",
+            "status": true
+        },
+        {
+            "type": "wss",
+            "name": "external",
+            "status": true
+        },
+        {
+            "type": "ssl",
+            "name": "external",
+            "status": true
+        },
+        {
+            "type": "ws",
+            "name": "external",
+            "status": true
+        }
+    ],
+    "date": "2023-05-11 03:23:54"
+}
+~~~
+Note that you need to modify the `resources` and `modules` related information in the json file. To modify the configuration related to MySQL resources, you need to modify the corresponding position at lines 77-92.
+
+![](./assets/sdes/edit_json_1.png)
+
+Then the module needs to modify the relevant configuration information of the Watsons module and the Prometheus monitoring module. The Prometheus monitoring module needs to modify the url address to the new pushgateway address, which is located on line 123.
+
+![](./assets/sdes/edit_json_2.png)
+
+The Watsons module also needs to be modified to the corresponding actual MySQL-related configuration, which is located in lines 170-173.
+
+![](./assets/sdes/edit_json_3.png)
+
+Save all modifications, and then return to the EMQX Dashboard page to import and upload json to restore the configuration.
+
+![](./assets/sdes/restore_backup.png)
+
+### Manual configuration
+
+#### Module
+
+##### Watsons Server
 
 Find `Modules` in the left navigation bar, click to enter and click `Add Module`.
 
@@ -348,15 +933,34 @@ configuration parameters
 
 Click the `Add` button, and the plug-in will load data from the MySQL database when it starts, and also initialize some business query processes. According to the MySQL performance and network speed, the startup will be slow, generally taking 4 to 5 seconds.
 
-### The module started successfully
+#### The module started successfully
 
 ![image](./assets/sdes/ensure_module.png)
+
+##### Prometheus
+
+Click `Devops` to find `EMQX Prometheus Agent`. Or enter `EMQX Prometheus Agent` in the search bar on the right and click `Select` to enter the module configuration.
+
+Here you need to fill in the corresponding Pushgateway information according to the actual situation.
+
+![](./assets/sdes/prometheus.png)
+
+configuration parameters
+
+| Name | Type | Info |
+| --------------- | ------ | -------------------- |
+| PushGateway URL | String | PushGateway URL address |
+| Push Interval | String | push interval |
+
+##### The module started successfully
+
+![](./assets/sdes/prometheus2.png)
 
 ### Module Considerations
 
 The module only needs to be started once, and the startup process will be automatically synchronized in the cluster.
 
-### Rule
+#### Rule
 
 After the module configuration is completed, a rule needs to be configured through the EMQX rule engine. This rule is mainly used for Job log report. First you need to configure MySQL resources.
 
@@ -556,7 +1160,7 @@ data:
         root: info
     sdes:
       baseUrl: http://10.95.35.93:33816
-      token: Basic YWRtaW46SiNpMiZEYmZjIW9k
+      token: Basic YWRtaW46ZW1xeGEzMDMu
 ~~~
 Note that here you need to modify `namespace: emqx-ee` to the corresponding k8S namespace, and the image name and image tag need to be modified to `image: "10.95.35.98/emqx/sdes-api:202305101513"` of the corresponding private warehouse. Modify jdbc-related configuration information and sdes-related configuration information in `confingmap`.
 ~~~yml
@@ -573,7 +1177,7 @@ At the same time, you need to modify the relevant information of the sdes config
 ~~~yml
 sdes:
   baseUrl: http://10.95.35.93:33816
-  token: Basic YWRtaW46YWRtaW4=
+  token: Basic YWRtaW46ZW1xeGEzMDMu
 ~~~
 
 Here, the baseUrl address is the EMQX Dashboard address, and token is its authentication information. If the password needs to be changed, it needs to be modified.
