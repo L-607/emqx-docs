@@ -47,7 +47,35 @@ EMQX Enterprise 版本使用三节点集群的方式，确保服务高可用。
 
 ## 开始部署
 
-### 部署emqx-ee
+## 部署emqx-ee
+
+部署emqx-ee提供两种部署方式：
+
+1.通过 helm 方式部署（推荐）
+
+2.通过原生Yaml 方式部署。
+
+### helm方式部署
+
+打开daocloud平台，找到应用模版,然后点击导入模版,上传做好的helm包。
+
+![](./assets/sdes/helm1.png)
+
+![](./assets/sdes/helm2.png)
+
+上传完成之后找到上传好的emqx-ee点击部署按钮进行部署。
+
+![](./assets/sdes/helm3.png)
+
+选择版本命名空间应用名信息。
+
+![](./assets/sdes/helm4.png)
+
+然后可以根据实际的需求修改 repository 跟 resource 以及service type信息，修改完成后点击部署即可。
+
+![](./assets/sdes/helm5.png)
+
+### 原生 Yaml 方式部署
 
 打开daocloud平台，点击应用然后选择通过 YAML 编排应用。填写类型如下 YAML 文件。
 

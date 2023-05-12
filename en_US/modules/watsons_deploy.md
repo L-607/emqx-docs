@@ -49,6 +49,34 @@ Resource configuration and port information are as follows
 
 ## Deploy emqx-ee
 
+Deploying emqx-ee provides two deployment methods:
+
+1. Deploy through helm (recommended)
+
+2. Deploy through native Yaml.
+
+### helm deployment
+
+Open the daocloud platform, find the application template, click Import Template, and upload the completed helm package.
+
+![](./assets/sdes/helm1.png)
+
+![](./assets/sdes/helm2.png)
+
+After the upload is complete, find the uploaded emqx-ee and click the deploy button to deploy.
+
+![](./assets/sdes/helm3.png)
+
+Select the version namespace application name information.
+
+![](./assets/sdes/helm4.png)
+
+Then you can modify the repository, resource, and service type information according to actual needs, and click Deploy after the modification is complete.
+
+![](./assets/sdes/helm5.png)
+
+### Native Yaml deployment
+
 Open the daocloud platform, click on the application and choose to arrange the application through YAML. Fill in the type as follows YAML file.
 
 ![daocloud_1](./assets/sdes/daocloud_1.png)
