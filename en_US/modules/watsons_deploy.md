@@ -22,7 +22,7 @@ Microservices written using the Java SpringBoot framework, RESTFul API. Serves t
 
 ### MySQL database
 
-Provide data support for the SDES platform. For database table design, refer to `MySQL DataBase` chapter.
+Provide data support for the SDES platform. For database table design, refer to `Watsons SDES DB Design` chapter.
 
 ### Front-end interactive component SDES Dashboard
 
@@ -1065,7 +1065,7 @@ VALUES
 
 After all configurations are complete, click confirm to submit.
 
-### deploy backend-api
+## deploy backend-api
 
 Open the daocloud platform, click on the application and choose to arrange the application through YAML. The steps here are the same as above.
 

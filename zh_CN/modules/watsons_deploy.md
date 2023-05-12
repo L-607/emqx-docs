@@ -22,7 +22,7 @@ EMQX Enterprise 版本使用三节点集群的方式，确保服务高可用。
 
 ### MySQL 数据库
 
-为 SDES 平台提供数据支撑。数据库表设计参考 `MySQL DataBase` 章节。
+为 SDES 平台提供数据支撑。数据库表设计参考 `Watsons SDES DB Design` 章节。
 
 ### 前端交互组件 SDES Dashboard
 
@@ -1068,7 +1068,7 @@ VALUES
 
 所有配置完成后点击 confirm 提交。
 
-### 部署backend—api
+## 部署backend—api
 
 打开daocloud平台，点击应用然后选择通过 YAML 编排应用。这里步骤跟上面一致
 
