@@ -42,8 +42,8 @@ Resource configuration and port information are as follows
 | :----------: | :-----------------------------: | ----------------- | ------------------------------------------------------- |
 | EMQX Cluster |           3 * (8c16g)           | 1c1g              | 1883<br/>8883<br/>8083<br/>8084<br/>8081<br/>18083<br/> |
 |  BackendAPI  | API(Java SpringBoot)2 * (8c16g) | 0.5c500m          | 9000                                                    |
-|              |                                 |                   |                                                         |
-|              |                                 |                   |                                                         |
+| PushGateWay  |           1 * (1c1g)            | 0.5c500m          | 9091                                                    |
+|  Prometheus  |         1 * (1c1g 2gb)          | 0.5c500m 1gb      | 9090                                                    |
 |    MySQL     |           1 * (8c16g)           | 1c1g              | 3306                                                    |
 |   Frontent   |           2 * (1c2g)            | 0.5c500m          |                                                         |
 
