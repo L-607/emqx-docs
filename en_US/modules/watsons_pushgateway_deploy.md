@@ -1,7 +1,6 @@
 # Watsons PushGateway Deploy
 
-PushGateWay 部署需要使用如下 K8S yaml 文件进行部署。
-
+PushGateWay deployment needs to use the following K8S yaml file for deployment.
 ~~~yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -81,7 +80,7 @@ status:
 
 ~~~
 
-Prometheus 配置文件中 PushGateWay 需要如下相关配置项。
+PushGateWay in the Prometheus configuration file requires the following related configuration items.
 ~~~yaml
 - job_name: pushgateway
   honor_timestamps: true
