@@ -286,6 +286,10 @@
           "path": "modules/watsons_db_design"
         },
         {
+          "title": "Watsons SDES PushGateWay Deploy",
+          "path": "modules/watsons_pushgateway_deploy.md"
+        },
+        {
           "title": "Watsons SDES Deploy",
           "path": "modules/watsons_deploy"
         },
@@ -1128,6 +1132,10 @@
         {
           "title": "Watsons SDES DB Design",
           "path": "modules/watsons_db_design"
+        },
+        {
+          "title": "Watsons SDES PushGateWay Deploy",
+          "path": "modules/watsons_pushgateway_deploy.md"
         },
         {
           "title": "Watsons SDES Deploy",
