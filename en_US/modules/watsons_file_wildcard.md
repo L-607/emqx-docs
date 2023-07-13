@@ -6,7 +6,7 @@ The source file path and target path of files such as POS reports, sales data, a
 ## Example
 
 | wildcard | matching result |
-| --------------- | --------------------------------- -|
+| --------------- | ----------------------------------|
 | `D:/file/*` | Files in the file directory under D drive |
 | `D:/file/*.*` | Files with suffixes in the file directory under the D drive |
 | `D:/file/a*` | files starting with a in the file directory under the D disk |
