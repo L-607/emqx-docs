@@ -310,6 +310,10 @@
           "path": "modules/watsons_task"
         },
         {
+          "title": "Watsons File Wildcard",
+          "path": "modules/watsons_file_wildcard"
+        },
+        {
           "title": "Watsons SDES Script - CopyFile",
           "path": "modules/watsons_script_copy_file"
         },
@@ -1156,6 +1160,10 @@
         {
           "title": "Watsons SDES Tasks",
           "path": "modules/watsons_task"
+        },
+        {
+          "title": "Watsons File Wildcard",
+          "path": "modules/watsons_file_wildcard"
         },
         {
           "title": "Watsons SDES Script - CopyFile",
